@@ -42,6 +42,27 @@
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script>
+      (function () {
+        try {
+          var r = sessionStorage.getItem('redirect');
+          if (r) {
+            sessionStorage.removeItem('redirect');
+            if (
+              r.startsWith('/') &&
+              !r.includes('://') &&
+              !r.startsWith('//')
+            ) {
+              window.history.replaceState(null, '', r);
+              // dispara depois que o React montar
+              window.addEventListener('load', function () {
+                window.dispatchEvent(new PopStateEvent('popstate'));
+              });
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <script>
       const darkMode = localStorage.getItem('darkMode') === 'true'
 
       if (darkMode) {
