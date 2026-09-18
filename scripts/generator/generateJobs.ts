@@ -9,16 +9,20 @@ import { varyTitle, varyDescription } from '../helpers/textVariations.ts'
 
 interface Job {
   jobId: number
-  title: string
-  description: string
-  requirements: string[]
-  employmentType: string
-  salary: string
-  currency: string
-  company: string
-  location: string
-  postedAt: string
+  title?: string
+  description?: string
+  requirements?: string[]
+  employmentType?: string
+  salary?: string
+  currency?: string
+  company?: string
+  location?: string
+  postedAt?: string
   url: string
+}
+
+function maybeMissing<T>(value: T, probability: number): T | undefined {
+  return Math.random() < probability ? undefined : value
 }
 
 function randomItem<T>(items: T[]): T {
@@ -41,15 +45,21 @@ function generateJobs(count: number): Job[] {
     jobs.push({
       jobId: i,
       title: varyTitle(template.title),
-      description: varyDescription(template.description),
-      requirements: template.requirements,
-      employmentType: template.employmentType,
-      salary: formatSalary( salaryTemplate.min, salaryTemplate.max, ),
-      currency: location.currency,
-      company: company.name,
-      location: location.state
-        ? `${location.city}, ${location.state}, ${location.country}`
-        : `${location.city}, ${location.country}`,
+      description: maybeMissing(varyDescription(template.description), 0.03),
+      requirements: maybeMissing(template.requirements, 0.05),
+      employmentType: maybeMissing(template.employmentType, 0.02),
+      salary: maybeMissing(
+        formatSalary(salaryTemplate.min, salaryTemplate.max),
+        0.10,
+      ),
+      currency: maybeMissing(location.currency, 0.10),
+      company: maybeMissing(company.name, 0.05),
+      location: maybeMissing(
+        location.state
+          ? `${location.city}, ${location.state}, ${location.country}`
+          : `${location.city}, ${location.country}`,
+        0.08,
+      ),
       postedAt: new Date().toISOString(),
       url: `/jobs/${i}`,
     })
