@@ -60,7 +60,7 @@ function generateJobs(count: number): Job[] {
           : `${location.city}, ${location.country}`,
         0.08,
       ),
-      postedAt: new Date().toISOString(),
+      postedAt: new Date().toLocaleDateString('en-CA').replaceAll('-', '/'),
       url: `/jobs/${i}`,
     })
   }
